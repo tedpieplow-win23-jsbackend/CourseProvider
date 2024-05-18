@@ -47,6 +47,7 @@ public class ContentType : ObjectType<ContentEntity>
         descriptor.Field(c => c.Description).Type<StringType>();
         descriptor.Field(c => c.Includes).Type<ListType<StringType>>();
         descriptor.Field(c => c.ProgramDetails).Type<ListType<ProgramDetailItemType>>();
+        descriptor.Field(c => c.LearnPoints).Type<ListType<StringType>>();
             //.Resolve(context => context.Parent<ContentEntity>().ProgramDetails);
     }
 }

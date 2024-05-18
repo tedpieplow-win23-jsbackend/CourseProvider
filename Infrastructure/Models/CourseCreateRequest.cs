@@ -32,6 +32,7 @@ public class ContentCreateRequest
     public string? Description { get; set; }
     public string[]? Includes { get; set; }
     public virtual List<ProgramDetailItemCreateRequest>? ProgramDetails { get; set; }
+    public string[]? LearnPoints { get; set; }
 }
 
 public class PricesCreateRequest

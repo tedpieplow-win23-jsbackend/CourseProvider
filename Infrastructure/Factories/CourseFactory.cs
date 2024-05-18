@@ -42,6 +42,7 @@ public static class CourseFactory
                     Title = pd.Title,
                     Description = pd.Description,
                 }).ToList(),
+                LearnPoints = request.Content.LearnPoints
             }
         };
     }
@@ -83,6 +84,7 @@ public static class CourseFactory
                     Title = pd.Title,
                     Description = pd.Description,
                 }).ToList(),
+                LearnPoints = request.Content.LearnPoints
             }
         };
     }
@@ -124,6 +126,7 @@ public static class CourseFactory
                     Title = pd.Title,
                     Description = pd.Description,
                 }).ToList(),
+                LearnPoints = entity.Content.LearnPoints
             }
         };
     }

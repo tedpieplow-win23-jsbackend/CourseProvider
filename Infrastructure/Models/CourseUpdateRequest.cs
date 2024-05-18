@@ -29,7 +29,8 @@ public class CourseUpdateRequest
 {
         public string? Description { get; set; }
         public string[]? Includes { get; set; }
-        public virtual List<ProgramDetailItemUpdateRequest>? ProgramDetails { get; set; }
+        public virtual List<ProgramDetailItemUpdateRequest>? ProgramDetails { get; set; }   
+        public string[]? LearnPoints { get; set; }
     }
 
     public class PricesUpdateRequest
