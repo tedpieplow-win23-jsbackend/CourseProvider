@@ -17,8 +17,8 @@ public class Course
     public string? Hours { get; set; }
     // We use virtual due to LazyLoading
     public virtual List<Author>? Authors { get; set; }
-    public virtual Prices? Prices { get; set; }
     public virtual Content? Content { get; set; }
+    public virtual Prices? Prices { get; set; }
 }
 
 public class Author
@@ -30,6 +30,7 @@ public class Content
     public string? Description { get; set; }
     public string[]? Includes { get; set; }
     public virtual List<ProgramDetailItem>? ProgramDetails { get; set; }
+    public string[]? LearnPoints { get; set; }
 }
 
 public class Prices
