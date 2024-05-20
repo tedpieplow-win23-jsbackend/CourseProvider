@@ -1,5 +1,4 @@
-﻿using Azure.Core;
-using Infrastructure.Data.Entities;
+﻿using Infrastructure.Data.Entities;
 using Infrastructure.Models;
 
 namespace Infrastructure.Factories;
@@ -42,7 +41,6 @@ public static class CourseFactory
                     Title = pd.Title,
                     Description = pd.Description,
                 }).ToList(),
-                LearnPoints = request.Content.LearnPoints
             }
         };
     }
@@ -84,7 +82,6 @@ public static class CourseFactory
                     Title = pd.Title,
                     Description = pd.Description,
                 }).ToList(),
-                LearnPoints = request.Content.LearnPoints
             }
         };
     }
@@ -126,7 +123,6 @@ public static class CourseFactory
                     Title = pd.Title,
                     Description = pd.Description,
                 }).ToList(),
-                LearnPoints = entity.Content.LearnPoints
             }
         };
     }
