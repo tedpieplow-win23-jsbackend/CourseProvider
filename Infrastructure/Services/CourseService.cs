@@ -1,4 +1,5 @@
 ﻿using Infrastructure.Data.Contexts;
+using Infrastructure.Data.Entities;
 using Infrastructure.Factories;
 using Infrastructure.Models;
 using Microsoft.EntityFrameworkCore;
@@ -69,15 +70,54 @@ public class CourseService(IDbContextFactory<DataContext> contextFactory) : ICou
 
     public async Task<Course> UpdateCourseAsync(CourseUpdateRequest request)
     {
-        await using var context = _contextFactory.CreateDbContext();
-        var existingCourse = await context.Courses.FirstOrDefaultAsync(c => c.Id == request.Id);
-        if (existingCourse is null) return null!;
+        try
+        {
+            await using var context = _contextFactory.CreateDbContext();
+            var existingCourse = await context.Courses
+                                              .Include(c => c.Content)
+                                              .ThenInclude(c => c.ProgramDetails)
+                                              .FirstOrDefaultAsync(c => c.Id == request.Id);
+            if (existingCourse is null) return null!;
 
-        var updatedCourseEntity = CourseFactory.Create(request);
-        updatedCourseEntity.Id = request.Id;
-        context.Entry(existingCourse).CurrentValues.SetValues(updatedCourseEntity);
+            context.Entry(existingCourse).CurrentValues.SetValues(CourseFactory.Create(request));
 
-        await context.SaveChangesAsync();
-        return CourseFactory.Create(existingCourse);
+            if (existingCourse.Content == null)
+            {
+                existingCourse.Content = new ContentEntity();
+            }
+
+            if (request.Content != null)
+            {
+                existingCourse.Content.Description = request.Content.Description;
+                existingCourse.Content.Includes = request.Content.Includes;
+
+                var existingProgramDetails = existingCourse.Content.ProgramDetails;
+                existingProgramDetails.Clear();
+
+                foreach (var pd in request.Content.ProgramDetails)
+                {
+                    existingProgramDetails.Add(new ProgramDetailItemEntity
+                    {
+                        Id = pd.Id,
+                        Title = pd.Title,
+                        Description = pd.Description
+                    });
+                }
+            }
+
+            var result = await context.SaveChangesAsync();
+            if (result > 0)
+            {
+                return CourseFactory.Create(existingCourse);
+            }
+            else
+            {
+                return null!;
+            }
+        }
+        catch (Exception)
+        {
+            throw;
+        }
     }
 }
