@@ -15,7 +15,6 @@ public class Course
     public string? LikesInPercent { get; set; }
     public string? Likes { get; set; }
     public string? Hours { get; set; }
-    // We use virtual due to LazyLoading
     public virtual List<Author>? Authors { get; set; }
     public virtual Prices? Prices { get; set; }
     public virtual Content? Content { get; set; }
