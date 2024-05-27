@@ -22,13 +22,60 @@ public class CourseService(IDbContextFactory<DataContext> contextFactory) : ICou
 
     public async Task<Course> CreateCourseAsync(CourseCreateRequest request)
     {
-        await using var context = _contextFactory.CreateDbContext();
+        try
+        {
+            await using var context = _contextFactory.CreateDbContext();
 
-        var courseEntity = CourseFactory.Create(request);
-        context.Courses.Add(courseEntity);
-        await context.SaveChangesAsync();
+            var courseEntity = new CourseEntity
+            {
+                ImageUri = request.ImageUri,
+                ImageHeaderUri = request.ImageHeaderUri,
+                IsBestseller = request.IsBestseller,
+                IsDigital = request.IsDigital,
+                Categories = request.Categories ?? [],
+                Title = request.Title,
+                Ingress = request.Ingress,
+                StarRating = request.StarRating,
+                Reviews = request.Reviews,
+                LikesInPercent = request.LikesInPercent,
+                Likes = request.Likes,
+                Hours = request.Hours,
+                Content = new ContentEntity
+                {
+                    Description = request.Content?.Description,
+                    Includes = request.Content?.Includes ?? [],
+                    ProgramDetails = request.Content?.ProgramDetails?.Select(pd => new ProgramDetailItemEntity
+                    {
+                        Id = pd.Id,
+                        Title = pd.Title,
+                        Description = pd.Description
+                    }).ToList() ?? new List<ProgramDetailItemEntity>()
+                },
+                Authors = request.Authors?.Select(a => new AuthorEntity
+                {
+                    Name = a.Name
+                }).ToList() ?? new List<AuthorEntity>(),
+                Prices = request.Prices != null ? new PricesEntity
+                {
+                    Price = request.Prices.Price,
+                    Discount = request.Prices.Discount,
+                    Currency = request.Prices.Currency,
+                } : new PricesEntity
+                {
+                    Price = 0m,
+                    Discount = 0m,
+                    Currency = "USD" 
+                }
+            };
 
-        return CourseFactory.Create(courseEntity);
+            context.Courses.Add(courseEntity);
+            var result = await context.SaveChangesAsync();
+            return courseEntity == null ? null! : CourseFactory.Create(courseEntity);
+        }
+        catch (Exception)
+        {
+            throw;
+        }
     }
 
     public async Task<bool> DeleteCourseAsync(string id)
@@ -107,7 +154,7 @@ public class CourseService(IDbContextFactory<DataContext> contextFactory) : ICou
             {
                 existingCourse.Authors!.Clear();
 
-                foreach(var author in request.Authors)
+                foreach (var author in request.Authors)
                 {
                     existingCourse.Authors.Add(new AuthorEntity { Name = author.Name });
                 }

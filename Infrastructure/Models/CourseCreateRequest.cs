@@ -17,7 +17,6 @@ public class CourseCreateRequest
     public string? LikesInPercent { get; set; }
     public string? Likes { get; set; }
     public string? Hours { get; set; }
-    // We use virtual due to LazyLoading
     public virtual List<AuthorCreateRequest>? Authors { get; set; }
     public virtual PricesCreateRequest? Prices { get; set; }
     public virtual ContentCreateRequest? Content { get; set; }

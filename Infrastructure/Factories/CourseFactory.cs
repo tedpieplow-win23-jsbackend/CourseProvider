@@ -9,7 +9,7 @@ public static class CourseFactory
     {
         try
         {
-            return new CourseEntity
+            var courseEntity = new CourseEntity
             {
                 ImageUri = request.ImageUri,
                 ImageHeaderUri = request.ImageHeaderUri,
@@ -36,7 +36,7 @@ public static class CourseFactory
                 Content = request.Content == null ? null : new ContentEntity
                 {
                     Description = request.Content.Description,
-                    Includes = request.Content.Includes,
+                    Includes = request.Content?.Includes ?? [],
                     ProgramDetails = request.Content.ProgramDetails?.Select(pd => new ProgramDetailItemEntity
                     {
                         Id = pd.Id,
@@ -45,6 +45,8 @@ public static class CourseFactory
                     }).ToList(),
                 }
             };
+
+            return courseEntity;
         }
         catch (Exception)
         {
@@ -105,8 +107,6 @@ public static class CourseFactory
     {
         try
         {
-
-
             return new Course
             {
                 Id = entity.Id,
