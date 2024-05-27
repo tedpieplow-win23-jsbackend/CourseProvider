@@ -76,15 +76,13 @@ public class CourseService(IDbContextFactory<DataContext> contextFactory) : ICou
             var existingCourse = await context.Courses
                                               .Include(c => c.Content)
                                               .ThenInclude(c => c.ProgramDetails)
+                                              .Include(c => c.Authors)
                                               .FirstOrDefaultAsync(c => c.Id == request.Id);
             if (existingCourse is null) return null!;
 
             context.Entry(existingCourse).CurrentValues.SetValues(CourseFactory.Create(request));
 
-            if (existingCourse.Content == null)
-            {
-                existingCourse.Content = new ContentEntity();
-            }
+            existingCourse.Content ??= new ContentEntity();
 
             if (request.Content != null)
             {
@@ -92,9 +90,9 @@ public class CourseService(IDbContextFactory<DataContext> contextFactory) : ICou
                 existingCourse.Content.Includes = request.Content.Includes;
 
                 var existingProgramDetails = existingCourse.Content.ProgramDetails;
-                existingProgramDetails.Clear();
+                existingProgramDetails!.Clear();
 
-                foreach (var pd in request.Content.ProgramDetails)
+                foreach (var pd in request.Content.ProgramDetails!)
                 {
                     existingProgramDetails.Add(new ProgramDetailItemEntity
                     {
@@ -102,6 +100,16 @@ public class CourseService(IDbContextFactory<DataContext> contextFactory) : ICou
                         Title = pd.Title,
                         Description = pd.Description
                     });
+                }
+            }
+
+            if (request.Authors != null)
+            {
+                existingCourse.Authors!.Clear();
+
+                foreach(var author in request.Authors)
+                {
+                    existingCourse.Authors.Add(new AuthorEntity { Name = author.Name });
                 }
             }
 
